@@ -11,8 +11,16 @@ struct CalculatorView: View {
     
     @StateObject var vm = CalculatorViewModel()
     
+    
     var body: some View {
-        Text("exchange_calculator_title")
-            .defaultFont(size: 30)
+        Text(vm.title)
+            .defaultFont(size: 30, weight: .semiBold)
+        
+        VStack {
+            
+            CurrencyFieldView(input: $vm.mainInput, currency: $vm.mainCurrency, swappable: true)
+            
+        }
+        .padding(.horizontal, 16)
     }
 }

@@ -12,6 +12,7 @@ struct ARQApp: App {
     var body: some Scene {
         WindowGroup {
             CalculatorView()
+                .appBackground()
         }
     }
 }
