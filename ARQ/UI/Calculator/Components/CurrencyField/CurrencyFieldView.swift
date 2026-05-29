@@ -13,7 +13,7 @@ struct CurrencyFieldView: View {
     
     @Binding var currency: String
     
-    let swappable: Bool
+    let interchangeableAction: (() -> Void)?
     
     @StateObject var vm = CurrencyFieldViewModel()
     
@@ -25,12 +25,19 @@ struct CurrencyFieldView: View {
             
             Group {
                 
-                Text(vm.currencyName(currency))
-                
-                if swappable {
-                    Image("ui_arrow_down")
-                        .frame(width: 12, height: 12)
-                        .offset(y: 2)
+                Group {
+                    
+                    Text(CurrencyUtils.currencyName(currency))
+                    
+                    if interchangeableAction != nil {
+                        Image(systemName: vm.interchangeableButtonIcon)
+                            .resizeSystemImage(width: 12, height: 12)
+                            .offset(y: 2)
+                    }
+                    
+                }
+                .onTapGesture {
+                    interchangeableAction?()
                 }
                 
                 Spacer()
@@ -46,9 +53,9 @@ struct CurrencyFieldView: View {
             .defaultFont(weight: .semiBold)
             
         }
-        .padding(20)
+        .padding(vm.clipPadding)
         .background(.white)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: vm.clipCornerRadius))
         
     }
 }

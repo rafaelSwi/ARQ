@@ -8,6 +8,7 @@
 final class MockExchangeRatesRepository: ExchangeRatesRepositoryProtocol {
     
     func fetchExchangeRates() async throws -> [ExchangeRates] {
+        try await Task.sleep(for: .seconds(3))
         return [
             ExchangeRates(
                 ask: 18.4105000000,

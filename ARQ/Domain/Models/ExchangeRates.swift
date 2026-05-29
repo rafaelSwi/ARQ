@@ -8,8 +8,8 @@
 import Foundation
 
 struct ExchangeRates {
-    let ask: Double?
-    let bid: Double?
+    var ask: Double?
+    var bid: Double?
     let book: String?
-    let date: Date?
+    var date: Date?
 }
