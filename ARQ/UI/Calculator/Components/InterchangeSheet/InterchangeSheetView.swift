@@ -13,7 +13,7 @@ struct InterchangeSheetView: View {
     
     @Binding var selectedCurrency: String
     
-    @Binding var currencies: [String: Double?]
+    var currencies: [String]
     
     @StateObject var vm = InterchangeSheetViewModel()
     

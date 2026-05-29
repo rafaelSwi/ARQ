@@ -11,6 +11,12 @@ final class MockExchangeRatesRepository: ExchangeRatesRepositoryProtocol {
         try await Task.sleep(for: .seconds(3))
         return [
             ExchangeRates(
+                ask: 1,
+                bid: 1,
+                book: "usdc_usdc",
+                date: nil,
+            ),
+            ExchangeRates(
                 ask: 18.4105000000,
                 bid: 18.4069700000,
                 book: "usdc_mxn",

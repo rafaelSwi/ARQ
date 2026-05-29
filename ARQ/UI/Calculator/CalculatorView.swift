@@ -28,6 +28,7 @@ struct CalculatorView: View {
                         currency: $vm.mainCurrency,
                         interchangeableAction: nil
                     )
+                    .onChange(of: vm.mainInput, vm.onMainInputChange)
                     
                     CurrencyFieldView(
                         input: $vm.secondaryInput,
@@ -35,6 +36,7 @@ struct CalculatorView: View {
                     ) {
                         vm.interchangeableButtonAction()
                     }
+                    .onChange(of: vm.secondaryInput, vm.onSecondaryInputChange)
                     
                 }
                 .padding(.horizontal, 16)
@@ -56,7 +58,7 @@ struct CalculatorView: View {
             InterchangeSheetView(
                 mainCurrency: $vm.mainCurrency,
                 selectedCurrency: $vm.secondaryCurrency,
-                currencies: $vm.currencies,
+                currencies: vm.availableCurrencies,
                 onDismiss: vm.onDismissSheetAction,
             ) { currency in
                 vm.interchangeCurrency(currency)
