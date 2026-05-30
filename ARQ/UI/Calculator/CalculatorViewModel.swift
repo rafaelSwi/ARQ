@@ -11,11 +11,22 @@ import SwiftUI
 @MainActor
 final class CalculatorViewModel: ObservableObject {
     
-    private let exchangeRatesService: ExchangeRatesService = ExchangeRatesService(repository: MockExchangeRatesRepository())
-    private let tickersService: TickersService = TickersService(repository: MockTickersRepository())
+    private let exchangeRatesService: ExchangeRatesService = ExchangeRatesService(
+        repository: MockExchangeRatesRepository()
+    )
+    private let tickersService: TickersService = TickersService(
+        repository: MockTickersRepository()
+    )
+    
+//    private let exchangeRatesService: ExchangeRatesService = ExchangeRatesService(
+//        repository: ExchangeRatesRepository(apiClient: APIClient(baseURL: URL(string: "https://api.dolarapp.dev")!))
+//    )
+//    private let tickersService: TickersService = TickersService(
+//        repository: TickersRepository(apiClient: APIClient(baseURL: URL(string: "https://api.dolarapp.dev")!))
+//    )
     
     let title: LocalizedStringKey = "exchange_calculator_title"
-    
+        
     @Published var currencies: [String] = []
     @Published var exchangeRates: [ExchangeRates] = []
     
@@ -24,10 +35,13 @@ final class CalculatorViewModel: ObservableObject {
     @Published var showInterchangeSheet: Bool = false
     
     @Published var mainCurrency: String = ""
-    @Published var mainInput: String = ""
+    @Published var mainCurrencyValue: Double = 0.0
     
     @Published var secondaryCurrency: String = ""
-    @Published var secondaryInput: String = ""
+    @Published var secondaryCurrencyValue: Double = 0.0
+    
+    @Published var mainFieldActive: Bool = false
+    @Published var secondaryFieldActive: Bool = false
     
     var updatingInputValue: Bool = false
     
@@ -36,9 +50,57 @@ final class CalculatorViewModel: ObservableObject {
         showInterchangeSheet = false
     }
     
-    func swap() {
-        Swift.swap(&mainCurrency, &secondaryCurrency)
-        Swift.swap(&mainInput, &secondaryInput)
+    func swapButtonAction() {
+        VibrationUtils.softVibrate()
+        UsabilityUtils.lowerKeyboard()
+        mainFieldActive = false
+        secondaryFieldActive = false
+        if mainCurrency.isEmpty || secondaryCurrency.isEmpty {
+            return
+        } else {
+            swap()
+        }
+    }
+    
+    func retryButtonAction() async {
+        VibrationUtils.softVibrate()
+        errorMessage = nil
+        await loadData()
+    }
+
+    var currentPriceInformation: String {
+        if isAnyCurrencyNotSelected {
+            return "\("selected_currency".localized) \(mainCurrency)"
+        } else {
+            let convertedValue: Double = convert(mainCurrency, secondaryCurrency, amount: 1) ?? 0
+            return "1 \(mainCurrency) = \(formatConvertedValue(convertedValue)) \(secondaryCurrency)"
+        }
+    }
+    
+    var isAnyCurrencyNotSelected: Bool {
+        return mainCurrency.isEmpty || secondaryCurrency.isEmpty
+    }
+    
+    var somethingGoneWrong: Bool {
+        return errorMessage != nil
+    }
+    
+    func onMainCurrencyValueChange() {
+        secondaryCurrencyValue = convert(mainCurrency, secondaryCurrency, amount: mainCurrencyValue) ?? 0.0
+    }
+    
+    func onSecondaryCurrencyValueChange() {
+        mainCurrencyValue = convert(secondaryCurrency, mainCurrency, amount: secondaryCurrencyValue) ?? 0.0
+    }
+    
+    func setMainFieldActive() {
+        secondaryFieldActive = false
+        mainFieldActive = true
+    }
+    
+    func setSecondaryFieldActive() {
+        mainFieldActive = false
+        secondaryFieldActive = true
     }
     
     func interchangeableButtonAction() {
@@ -52,7 +114,7 @@ final class CalculatorViewModel: ObservableObject {
             swap()
         } else {
             secondaryCurrency = currency
-            onMainInputChange()
+            secondaryCurrencyValue = convert(mainCurrency, currency, amount: mainCurrencyValue) ?? 0
         }
         showInterchangeSheet = false
     }
@@ -75,30 +137,20 @@ final class CalculatorViewModel: ObservableObject {
         }
     }
     
-    func onMainInputChange() {
-        updateInput(from: mainCurrency, to: secondaryCurrency, source: mainInput) {
-            secondaryInput = $0
-        }
-    }
-
-    func onSecondaryInputChange() {
-        updateInput(from: secondaryCurrency, to: mainCurrency, source: secondaryInput) {
-            mainInput = $0
-        }
-    }
-
-    private func updateInput(from: String, to: String, source: String, update: (String) -> Void) {
-        guard !updatingInputValue else { return }
-        updatingInputValue = true
-        defer { updatingInputValue = false }
-        if let converted = convert(from, to, amount: parseInput(source)) {
-            update("$\(String(format: "%.2f", converted))")
-        }
+    private func swap() {
+        Swift.swap(&mainCurrency, &secondaryCurrency)
+        Swift.swap(&mainCurrencyValue, &secondaryCurrencyValue)
     }
     
-    private func parseInput(_ input: String) -> Double {
-        let cleaned = input.replacingOccurrences(of: "$", with: "")
-        return Double(cleaned) ?? 0
+    private func formatConvertedValue(_ value: Double) -> String {
+        if value == 0 { return "0" }
+        
+        if value >= 1 {
+            return String(format: "%.2f", value)
+        } else {
+            let digits = Int(ceil(-log10(abs(value)))) + 2
+            return String(format: "%.\(digits)f", value)
+        }
     }
     
     private func convert(_ fromCurrency: String, _ toCurrency: String, amount: Double) -> Double? {
@@ -134,8 +186,7 @@ final class CalculatorViewModel: ObservableObject {
     }
     
     private func loadExchangeRates() async throws {
-        let fetchedExchangeRates: [ExchangeRates] = try await exchangeRatesService.execute()
-        print("fetchedExchangeRates: \(fetchedExchangeRates)")
+        let fetchedExchangeRates: [ExchangeRates] = try await exchangeRatesService.execute(currencies: currencies)
         for fetched in fetchedExchangeRates {
             if let index = exchangeRates.firstIndex(where: { $0.book == fetched.book }) {
                 exchangeRates[index] = fetched

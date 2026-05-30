@@ -11,7 +11,11 @@ struct SwappableButtonView: View {
     
     @StateObject var vm = SwappableButtonViewModel()
     
+    let disabled: Bool
+    
     let swappableAction: (() -> Void)?
+    
+    let disabledAction: (() -> Void)?
     
     var body: some View {
         ZStack {
@@ -24,14 +28,17 @@ struct SwappableButtonView: View {
                 .foregroundStyle(.brand)
                 .frame(width: vm.greenCircleSize, height: vm.greenCircleSize)
             
-            Image(systemName: vm.arrowDownIcon)
-                .resizeSystemImage(width: vm.arrowIconSize, height: vm.arrowIconSize)
+            Image(systemName: disabled ? vm.disabledIcon : vm.arrowDownIcon)
+                .resizeSystemImage(width: vm.iconSize(disabled), height: vm.iconSize(disabled))
                 .foregroundStyle(.background)
                 .fontWeight(.heavy)
         }
         .onTapGesture {
-            VibrationUtils.softVibrate()
-            swappableAction?()
+            if disabled {
+                disabledAction?()
+            } else {
+                swappableAction?()
+            }
         }
     }
 }

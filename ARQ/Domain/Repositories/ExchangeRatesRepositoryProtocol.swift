@@ -6,5 +6,5 @@
 //
 
 protocol ExchangeRatesRepositoryProtocol {
-    func fetchExchangeRates() async throws -> [ExchangeRates]
+    func fetchExchangeRates(currencies: [String]) async throws -> [ExchangeRates]
 }

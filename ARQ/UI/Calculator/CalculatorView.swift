@@ -11,54 +11,86 @@ struct CalculatorView: View {
     
     @StateObject var vm = CalculatorViewModel()
     
-    
     var body: some View {
         
         VStack {
             
-            Text(vm.title)
-                .defaultFont(size: 30, weight: .semiBold)
+            Group {
+                HStack {
+                    Text(vm.title)
+                        .defaultFont(size: 30, weight: .bold)
+                    Spacer()
+                }
+                .padding(.top, UIScreen.main.bounds.height * 0.15)
+                
+                Spacer()
+                    .frame(height: 8)
+                
+                HStack {
+                    Text(vm.currentPriceInformation)
+                        .defaultFont(weight: .semiBold)
+                        .foregroundStyle(.brand)
+                    Spacer()
+                }
+            }
+            .padding(.horizontal, 16)
+            
+            Spacer()
+                .frame(height: 30)
             
             ZStack {
                 
                 VStack(spacing: 15) {
                     
                     CurrencyFieldView(
-                        input: $vm.mainInput,
+                        value: $vm.mainCurrencyValue,
                         currency: $vm.mainCurrency,
-                        interchangeableAction: nil
+                        active: vm.mainFieldActive,
+                        interchangeableAction: nil,
+                        onFocus: vm.setMainFieldActive,
                     )
-                    .onChange(of: vm.mainInput, vm.onMainInputChange)
+                    .onChange(of: vm.mainCurrencyValue, vm.onMainCurrencyValueChange)
                     
                     CurrencyFieldView(
-                        input: $vm.secondaryInput,
-                        currency: $vm.secondaryCurrency
-                    ) {
-                        vm.interchangeableButtonAction()
-                    }
-                    .onChange(of: vm.secondaryInput, vm.onSecondaryInputChange)
+                        value: $vm.secondaryCurrencyValue,
+                        currency: $vm.secondaryCurrency,
+                        active: vm.secondaryFieldActive,
+                        interchangeableAction: vm.interchangeableButtonAction,
+                        onFocus: vm.setSecondaryFieldActive
+                    )
+                    .onChange(of: vm.secondaryCurrencyValue, vm.onSecondaryCurrencyValueChange)
                     
                 }
                 .padding(.horizontal, 16)
                 
-                SwappableButtonView() {
-                    vm.swap()
-                }
+                SwappableButtonView(
+                    disabled: vm.isAnyCurrencyNotSelected,
+                    swappableAction: vm.swapButtonAction,
+                    disabledAction: vm.interchangeableButtonAction
+                )
             }
             .task {
                 await vm.loadData()
             }
             
-            Text(vm.errorMessage ?? "no_error_at_the_moment") // TODO: REMOVE
-                .bold()
-                .foregroundStyle(.brown)
-                .padding(.top, 15)
+            if vm.somethingGoneWrong {
+                Spacer()
+                    .frame(height: 20)
+                ErrorWarningView(message: vm.errorMessage, retryAction: vm.retryButtonAction)
+            }
+            
+            Color.clear
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    UsabilityUtils.lowerKeyboard()
+                }
         }
         .sheet(isPresented: $vm.showInterchangeSheet) {
             InterchangeSheetView(
                 mainCurrency: $vm.mainCurrency,
                 selectedCurrency: $vm.secondaryCurrency,
                 currencies: vm.availableCurrencies,
+                error: vm.somethingGoneWrong,
                 onDismiss: vm.onDismissSheetAction,
             ) { currency in
                 vm.interchangeCurrency(currency)

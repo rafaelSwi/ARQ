@@ -20,3 +20,22 @@ struct Endpoint {
         return request
     }
 }
+
+extension Endpoint {
+    static func exchangeRates(currencies: [String]) -> Endpoint {
+        let joined = currencies.joined(separator: ",")
+        return Endpoint(
+            path: "/v1/tickers?currencies=\(joined)",
+            method: "GET",
+            body: nil
+        )
+    }
+
+    static func tickersCurrencies() -> Endpoint {
+        return Endpoint(
+            path: "/v1/tickers-currencies",
+            method: "GET",
+            body: nil
+        )
+    }
+}

@@ -7,4 +7,7 @@
 
 enum APIError: Error {
     case invalidResponse
+    case noInternet
+    case timeout
+    case decodingFailed
 }

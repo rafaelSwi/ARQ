@@ -18,8 +18,9 @@ final class APIClient {
     }
     
     func request<T: Decodable>(_ endpoint: Endpoint) async throws -> T {
-            let urlRequest = try endpoint.asURLRequest(baseURL: baseURL)
-            
+        let urlRequest = try endpoint.asURLRequest(baseURL: baseURL)
+        
+        do {
             let (data, response) = try await session.data(for: urlRequest)
             
             guard let http = response as? HTTPURLResponse,
@@ -27,7 +28,19 @@ final class APIClient {
                 throw APIError.invalidResponse
             }
             
-            return try JSONDecoder().decode(T.self, from: data)
+            do {
+                return try JSONDecoder().decode(T.self, from: data)
+            } catch {
+                throw APIError.decodingFailed
+            }
+            
+        } catch let urlError as URLError {
+            switch urlError.code {
+            case .notConnectedToInternet: throw APIError.noInternet
+            case .timedOut: throw APIError.timeout
+            default: throw APIError.invalidResponse
+            }
         }
+    }
     
 }

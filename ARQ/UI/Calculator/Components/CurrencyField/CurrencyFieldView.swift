@@ -9,11 +9,17 @@ import SwiftUI
 
 struct CurrencyFieldView: View {
     
-    @Binding var input: String
+    @Binding var value: Double
     
     @Binding var currency: String
     
+    var active: Bool
+    
     let interchangeableAction: (() -> Void)?
+    
+    let onFocus: (() -> Void)
+    
+    @FocusState private var isFocused: Bool
     
     @StateObject var vm = CurrencyFieldViewModel()
     
@@ -42,19 +48,46 @@ struct CurrencyFieldView: View {
                 
                 Spacer()
                 
-                TextField(vm.amountFieldTitle, text: $input)
-                    .keyboardType(.decimalPad)
-                    .multilineTextAlignment(.trailing)
-                    .onChange(of: input) { // TODO: CHECK THIS
-                        vm.persistMoneySymbol($input, newValue: input)
+                ZStack {
+                    
+                    HStack {
+                        
+                        Spacer()
+                        
+                        Text(vm.visibleInput)
+                            .multilineTextAlignment(.trailing)
+                            .lineLimit(1)
+                            .defaultFont()
+                            .offset(x: -2)
+                            .onChange(of: value) {
+                                vm.currencyValueChangedAction(active: active, value: value)
+                            }
                     }
+                    
+                    TextField("", text: $vm.input, selection: $vm.selection)
+                        .keyboardType(.decimalPad)
+                        .multilineTextAlignment(.trailing)
+                        .foregroundStyle(.opacity(0.0))
+                        .focused($isFocused)
+                        .onChange(of: vm.input) {
+                            vm.registerInput()
+                            value = vm.convertToCurrencyValue(vm.store)
+                        }
+                    
+                }
+                .onChange(of: isFocused) {
+                    if isFocused {
+                        vm.persistTextSelectionAtTheEnd()
+                        onFocus()
+                    }
+                }
                 
             }
             .defaultFont(weight: .semiBold)
             
         }
         .padding(vm.clipPadding)
-        .background(.white)
+        .background(.stockButton)
         .clipShape(RoundedRectangle(cornerRadius: vm.clipCornerRadius))
         
     }

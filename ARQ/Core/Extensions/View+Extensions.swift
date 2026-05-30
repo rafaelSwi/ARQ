@@ -21,6 +21,7 @@ extension View {
         
         return self
             .font(Font.custom(font.rawValue, size: CGFloat(size), relativeTo: .title))
+            .kerning(-0.5)
     }
     
     func appBackground() -> some View {

@@ -6,7 +6,7 @@
 //
 
 protocol ExchangeRatesServiceProtocol {
-    func execute() async throws -> [ExchangeRates]
+    func execute(currencies: [String]) async throws -> [ExchangeRates]
 }
 
 final class ExchangeRatesService: ExchangeRatesServiceProtocol {
@@ -17,8 +17,8 @@ final class ExchangeRatesService: ExchangeRatesServiceProtocol {
         self.repository = repository
     }
     
-    func execute() async throws -> [ExchangeRates] {
-        let rates = try await repository.fetchExchangeRates()
+    func execute(currencies: [String]) async throws -> [ExchangeRates] {
+        let rates = try await repository.fetchExchangeRates(currencies: currencies)
         return rates
     }
     

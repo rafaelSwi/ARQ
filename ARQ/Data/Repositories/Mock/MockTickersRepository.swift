@@ -9,10 +9,7 @@ final class MockTickersRepository: TickersRepositoryProtocol {
     
     func fetchTickers() async throws -> [String] {
         try await Task.sleep(for: .seconds(3))
-        return ["MXN", "ARS", "BRL", "COP"]
+        return ["MXN", "ARS", "BRL", "COP", "EURc"]
     }
-    
-    
-    
     
 }

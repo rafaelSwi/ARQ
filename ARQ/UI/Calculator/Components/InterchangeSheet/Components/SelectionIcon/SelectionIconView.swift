@@ -29,7 +29,7 @@ struct SelectionIconView: View {
                 
                 Image(systemName: vm.selectedIcon)
                     .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.stockButton)
             }
         }
     }

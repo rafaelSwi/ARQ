@@ -1,4 +1,7 @@
 "exchange_calculator_title" = "Exchange Calculator";
-"amount" = "Amount";
 "nothing_selected" = "Nothing selected";
 "choose_currency" = "Choose currency";
+"selected_currency" = "Selected Currency:";
+"loading_currencies" = "Loading currencies...";
+"try_again" = "Try again";
+"an_error_occurred" = "An error occurred";

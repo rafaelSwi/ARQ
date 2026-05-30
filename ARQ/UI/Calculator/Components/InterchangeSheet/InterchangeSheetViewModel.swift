@@ -13,7 +13,13 @@ final class InterchangeSheetViewModel: ObservableObject {
     
     let chooseCurrencyTitle: LocalizedStringKey = "choose_currency"
     
+    let loadingCurrenciesLabel: LocalizedStringKey = "loading_currencies"
+    
+    let errorMessageLabel: LocalizedStringKey = "an_error_occurred"
+    
     let dismissButtonIcon: String = "xmark"
+    
+    let errorIcon: String = "exclamationmark.circle"
     
     let selectedCurrencyIcon: String = "checkmark"
     

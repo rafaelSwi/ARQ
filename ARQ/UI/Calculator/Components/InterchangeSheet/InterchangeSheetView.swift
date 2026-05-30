@@ -9,13 +9,15 @@ import SwiftUI
 
 struct InterchangeSheetView: View {
     
+    @StateObject var vm = InterchangeSheetViewModel()
+    
     @Binding var mainCurrency: String
     
     @Binding var selectedCurrency: String
     
     var currencies: [String]
     
-    @StateObject var vm = InterchangeSheetViewModel()
+    let error: Bool
     
     let onDismiss: () -> Void
     
@@ -36,7 +38,8 @@ struct InterchangeSheetView: View {
                 } label: {
                     Image(systemName: vm.dismissButtonIcon)
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundStyle(.black)
+                        .foregroundStyle(.foreground)
+                        .opacity(0.8)
                 }
                 
             }
@@ -46,7 +49,30 @@ struct InterchangeSheetView: View {
             
             VStack(spacing: 0) {
                 
-                ForEach(vm.currencyList(currencies, mainCurrency), id: \.self) { currency in
+                let currencyList = vm.currencyList(currencies, mainCurrency)
+                
+                Group {
+                    if error {
+                        HStack {
+                            Text(vm.errorMessageLabel)
+                                .defaultFont()
+                            Spacer()
+                            Image(systemName: vm.errorIcon)
+                                .resizeSystemImage(width: 17, height: 17)
+                        }
+                    } else if currencyList.isEmpty {
+                        HStack {
+                            Text(vm.loadingCurrenciesLabel)
+                                .defaultFont()
+                            Spacer()
+                            ProgressView()
+                        }
+                    }
+                    
+                }
+                .padding()
+                
+                ForEach(currencyList, id: \.self) { currency in
                     
                     HStack(spacing: 12) {
                         

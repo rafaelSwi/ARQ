@@ -12,8 +12,12 @@ import SwiftUI
 final class SwappableButtonViewModel: ObservableObject {
     
     let arrowDownIcon: String = "arrow.down"
-    let arrowIconSize: CGFloat = 12
+    let disabledIcon: String = "circle.fill"
     let greenCircleSize: CGFloat = 28
+    
+    func iconSize( _ disabled: Bool) -> CGFloat {
+        return disabled ? 8 : 12
+    }
     
     var backCircleSize: CGFloat {
         return greenCircleSize + (greenCircleSize * 0.5)
