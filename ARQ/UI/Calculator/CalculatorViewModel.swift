@@ -11,22 +11,19 @@ import SwiftUI
 @MainActor
 final class CalculatorViewModel: ObservableObject {
     
-    private let exchangeRatesService: ExchangeRatesService = ExchangeRatesService(
-        repository: MockExchangeRatesRepository()
-    )
-    private let tickersService: TickersService = TickersService(
-        repository: MockTickersRepository()
-    )
+    private let exchangeRatesService: ExchangeRatesService
+    private let tickersService: TickersService
     
-//    private let exchangeRatesService: ExchangeRatesService = ExchangeRatesService(
-//        repository: ExchangeRatesRepository(apiClient: APIClient(baseURL: URL(string: "https://api.dolarapp.dev")!))
-//    )
-//    private let tickersService: TickersService = TickersService(
-//        repository: TickersRepository(apiClient: APIClient(baseURL: URL(string: "https://api.dolarapp.dev")!))
-//    )
+    init(
+        exchangeRatesService: ExchangeRatesService,
+        tickersService: TickersService
+    ) {
+        self.exchangeRatesService = exchangeRatesService
+        self.tickersService = tickersService
+    }
     
     let title: LocalizedStringKey = "exchange_calculator_title"
-        
+    
     @Published var currencies: [String] = []
     @Published var exchangeRates: [ExchangeRates] = []
     
@@ -67,7 +64,7 @@ final class CalculatorViewModel: ObservableObject {
         errorMessage = nil
         await loadData()
     }
-
+    
     var currentPriceInformation: String {
         if isAnyCurrencyNotSelected {
             return "\("selected_currency".localized) \(mainCurrency)"
@@ -159,7 +156,7 @@ final class CalculatorViewModel: ObservableObject {
         guard let fromValue, let toValue, fromValue != 0 else { return nil }
         return (amount / fromValue) * toValue
     }
-
+    
     private func currencyValueInUSDc(_ currency: String) -> Double? {
         let currencyName = currency.lowercased()
         for exchangeRate in exchangeRates {
@@ -178,11 +175,9 @@ final class CalculatorViewModel: ObservableObject {
     
     private func loadCurrencies() async throws {
         let fetchedCurrencies: [String] = try await tickersService.execute()
-        for fetched in fetchedCurrencies {
-            if currencies.contains(fetched) == false {
-                currencies.append(fetched)
-            }
-        }
+        let existing = Set(currencies)
+        let newItems = fetchedCurrencies.filter { !existing.contains($0) }
+        currencies.append(contentsOf: newItems)
     }
     
     private func loadExchangeRates() async throws {
@@ -195,5 +190,21 @@ final class CalculatorViewModel: ObservableObject {
             }
         }
     }
-    
+}
+
+extension CalculatorViewModel {
+    static func makeDefault() -> CalculatorViewModel {
+        let apiClient = APIClient(baseURL: URL(string: "https://api.dolarapp.dev")!)
+        return CalculatorViewModel(
+            exchangeRatesService: ExchangeRatesService(repository: ExchangeRatesRepository(apiClient: apiClient)),
+            tickersService: TickersService(repository: TickersRepository(apiClient: apiClient))
+        )
+    }
+
+    static func makeMock() -> CalculatorViewModel {
+        CalculatorViewModel(
+            exchangeRatesService: ExchangeRatesService(repository: MockExchangeRatesRepository()),
+            tickersService: TickersService(repository: MockTickersRepository())
+        )
+    }
 }

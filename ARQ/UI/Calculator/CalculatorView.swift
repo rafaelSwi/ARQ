@@ -9,7 +9,9 @@ import SwiftUI
 
 struct CalculatorView: View {
     
-    @StateObject var vm = CalculatorViewModel()
+    // makeDefault(): Makes the API calls listed in the task description.
+    // makeMock(): It simulates an API call and uses fake data.
+    @StateObject var vm = CalculatorViewModel.makeMock()
     
     var body: some View {
         

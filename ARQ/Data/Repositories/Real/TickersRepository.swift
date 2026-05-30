@@ -15,7 +15,7 @@ final class TickersRepository: TickersRepositoryProtocol {
 
     func fetchTickers() async throws -> [String] {
         let response: TickersCurrenciesResponseDTO = try await apiClient.request(.tickersCurrencies())
-        return response.payload
+        return response
     }
 
 }

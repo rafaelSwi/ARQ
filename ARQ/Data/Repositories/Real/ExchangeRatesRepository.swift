@@ -5,6 +5,8 @@
 //  Created by rafael on 29/05/26.
 //
 
+import Foundation
+
 final class ExchangeRatesRepository: ExchangeRatesRepositoryProtocol {
 
     private let apiClient: APIClient
@@ -14,8 +16,23 @@ final class ExchangeRatesRepository: ExchangeRatesRepositoryProtocol {
     }
 
     func fetchExchangeRates(currencies: [String]) async throws -> [ExchangeRates] {
-        let response: ExchangeRatesResponseDTO = try await apiClient.request(.exchangeRates(currencies: currencies))
-        return response.payload.map { $0.toDomain() }
+        var results: [ExchangeRates] = []
+        
+        results.append(
+            ExchangeRates(ask: 1.0, bid: 1.0, book: "usdc_usdc", date: Date.now)
+        )
+
+        for currency in currencies {
+            do {
+                let response: [ExchangeRateDTO] = try await apiClient.request(.exchangeRates(currencies: [currency]))
+                let mapped = response.map { $0.toDomain() }
+                results.append(contentsOf: mapped)
+            } catch APIError.internalServerError {
+                continue
+            }
+        }
+
+        return results
     }
 
 }

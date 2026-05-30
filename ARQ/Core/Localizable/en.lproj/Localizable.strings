@@ -5,3 +5,9 @@
 "loading_currencies" = "Loading currencies...";
 "try_again" = "Try again";
 "an_error_occurred" = "An error occurred";
+"error_invalid_response" = "Invalid Response";
+"error_no_internet" = "No Internet Connection";
+"error_timeout" = "Request timed out.";
+"error_decoding_failed" = "Failed to process the received data.";
+"error_invalid_url" = "Invalid URL";
+"error_internal_server" = "Internal Server Error";

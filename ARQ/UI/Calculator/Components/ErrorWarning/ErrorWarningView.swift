@@ -28,7 +28,7 @@ struct ErrorWarningView: View {
         .background(.stockButton)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         
-        Text(message ?? "")
+        Text(message?.localized ?? "")
             .defaultFont(size: 11)
             .foregroundStyle(.red)
             .lineLimit(2)

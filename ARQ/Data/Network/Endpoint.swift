@@ -10,23 +10,32 @@ import Foundation
 struct Endpoint {
     let path: String
     let method: String
+    var queryItems: [URLQueryItem] = []
     let body: Data?
     
     func asURLRequest(baseURL: URL) throws -> URLRequest {
-        var request = URLRequest(url: baseURL.appending(path: path))
-        request.httpMethod = method
-        request.httpBody = body
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        return request
-    }
+            var components = URLComponents(url: baseURL.appendingPathComponent(path),
+                                           resolvingAgainstBaseURL: true)
+            if !queryItems.isEmpty {
+                components?.queryItems = queryItems
+            }
+
+            guard let url = components?.url else { throw APIError.invalidURL }
+
+            var request = URLRequest(url: url)
+            request.httpMethod = method
+            request.allHTTPHeaderFields = ["Content-Type": "application/json"]
+            request.httpBody = body
+            return request
+        }
 }
 
 extension Endpoint {
     static func exchangeRates(currencies: [String]) -> Endpoint {
-        let joined = currencies.joined(separator: ",")
         return Endpoint(
-            path: "/v1/tickers?currencies=\(joined)",
+            path: "/v1/tickers",
             method: "GET",
+            queryItems: [URLQueryItem(name: "currencies", value: currencies.joined(separator: ","))],
             body: nil
         )
     }
