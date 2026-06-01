@@ -1,0 +1,15 @@
+"exchange_calculator_title" = "Kalkulator Walutowy";
+"nothing_selected" = "Nic nie wybrano";
+"choose_currency" = "Wybierz walutę";
+"selected_currency" = "Wybrana waluta:";
+"loading_currencies" = "Ładowanie walut...";
+"try_again" = "Spróbuj ponownie";
+"an_error_occurred" = "Wystąpił błąd";
+"warning_exchange_rate_changed" = "Kurs wybranej waluty uległ zmianie";
+"warning_exchange_rate_changed_help" = "Zamknięcie klawiatury automatycznie zaktualizuje wartość";
+"error_invalid_response" = "Nieprawidłowa odpowiedź";
+"error_no_internet" = "Brak połączenia z Internetem";
+"error_timeout" = "Przekroczono limit czasu żądania.";
+"error_decoding_failed" = "Nie udało się przetworzyć otrzymanych danych.";
+"error_invalid_url" = "Nieprawidłowy adres URL";
+"error_internal_server" = "Wewnętrzny błąd serwera";

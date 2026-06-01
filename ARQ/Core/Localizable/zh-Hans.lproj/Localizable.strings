@@ -1,0 +1,15 @@
+"exchange_calculator_title" = "汇率计算器";
+"nothing_selected" = "未选择任何项目";
+"choose_currency" = "选择货币";
+"selected_currency" = "已选择货币：";
+"loading_currencies" = "正在加载货币...";
+"try_again" = "重试";
+"an_error_occurred" = "发生错误";
+"warning_exchange_rate_changed" = "所选货币的汇率已发生变化";
+"warning_exchange_rate_changed_help" = "收起键盘后将自动更新数值";
+"error_invalid_response" = "无效响应";
+"error_no_internet" = "无互联网连接";
+"error_timeout" = "请求超时。";
+"error_decoding_failed" = "处理接收到的数据失败。";
+"error_invalid_url" = "无效的 URL";
+"error_internal_server" = "服务器内部错误";

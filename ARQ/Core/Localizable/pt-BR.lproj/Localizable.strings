@@ -1,0 +1,15 @@
+"exchange_calculator_title" = "Calculadora de Câmbio";
+"nothing_selected" = "Seleção vazia";
+"choose_currency" = "Escolha uma moeda";
+"selected_currency" = "Moeda:";
+"loading_currencies" = "Carregando...";
+"try_again" = "Tentar novamente";
+"an_error_occurred" = "Ocorreu um erro";
+"warning_exchange_rate_changed" = "A taxa de câmbio da moeda selecionada foi alterada";
+"warning_exchange_rate_changed_help" = "Fechar o teclado atualizará o valor automaticamente";
+"error_invalid_response" = "Resposta inválida";
+"error_no_internet" = "Sem conexão";
+"error_timeout" = "Tempo limite da solicitação excedido.";
+"error_decoding_failed" = "Falha ao processar os dados recebidos.";
+"error_invalid_url" = "URL inválida";
+"error_internal_server" = "Erro interno do servidor";

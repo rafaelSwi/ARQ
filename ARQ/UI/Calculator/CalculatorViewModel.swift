@@ -7,6 +7,7 @@
 
 import Combine
 import SwiftUI
+import Network
 
 @MainActor
 final class CalculatorViewModel: ObservableObject {
@@ -14,12 +15,17 @@ final class CalculatorViewModel: ObservableObject {
     private let exchangeRatesService: ExchangeRatesService
     private let tickersService: TickersService
     
+    private var pollingTask: Task<Void, Never>?
+    private let monitor = NWPathMonitor()
+    private var isConnected: Bool = false
+    
     init(
         exchangeRatesService: ExchangeRatesService,
         tickersService: TickersService
     ) {
         self.exchangeRatesService = exchangeRatesService
         self.tickersService = tickersService
+        startNetworkMonitor()
     }
     
     let title: LocalizedStringKey = "exchange_calculator_title"
@@ -28,8 +34,8 @@ final class CalculatorViewModel: ObservableObject {
     @Published var exchangeRates: [ExchangeRates] = []
     
     @Published var errorMessage: String? = nil
-    
     @Published var showInterchangeSheet: Bool = false
+    @Published var showExchangeRateChangedWarning: Bool = false
     
     @Published var mainCurrency: String = ""
     @Published var mainCurrencyValue: Double = 0.0
@@ -40,7 +46,7 @@ final class CalculatorViewModel: ObservableObject {
     @Published var mainFieldActive: Bool = false
     @Published var secondaryFieldActive: Bool = false
     
-    var updatingInputValue: Bool = false
+    let cooldownToRefreshExchangeRate: Int = 60
     
     func onDismissSheetAction() {
         VibrationUtils.softVibrate()
@@ -83,10 +89,12 @@ final class CalculatorViewModel: ObservableObject {
     }
     
     func onMainCurrencyValueChange() {
+        defer { showExchangeRateChangedWarning = false }
         secondaryCurrencyValue = convert(mainCurrency, secondaryCurrency, amount: mainCurrencyValue) ?? 0.0
     }
     
     func onSecondaryCurrencyValueChange() {
+        defer { showExchangeRateChangedWarning = false }
         mainCurrencyValue = convert(secondaryCurrency, mainCurrency, amount: secondaryCurrencyValue) ?? 0.0
     }
     
@@ -103,6 +111,14 @@ final class CalculatorViewModel: ObservableObject {
     func interchangeableButtonAction() {
         VibrationUtils.softVibrate()
         showInterchangeSheet.toggle()
+    }
+    
+    func onEmptyAreaClickAction() {
+        UsabilityUtils.lowerKeyboard()
+        mainFieldActive = false
+        secondaryFieldActive = false
+        showExchangeRateChangedWarning = false
+        updateFieldValueBasedOnFocus()
     }
     
     func interchangeCurrency(_ currency: String) {
@@ -126,12 +142,43 @@ final class CalculatorViewModel: ObservableObject {
         }
     }
     
+    func startPolling() {
+        pollingTask?.cancel()
+        pollingTask = Task {
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(cooldownToRefreshExchangeRate))
+                guard !Task.isCancelled else { break }
+                guard isConnected else { continue }
+                await refreshRates()
+            }
+        }
+    }
+    
+    private func refreshRates() async {
+        do {
+            try await loadExchangeRates()
+        } catch {}
+    }
+    
+    private func startNetworkMonitor() {
+        monitor.pathUpdateHandler = { [weak self] path in
+            Task { @MainActor [weak self] in
+                self?.isConnected = path.status == .satisfied
+            }
+        }
+        monitor.start(queue: DispatchQueue(label: "NetworkMonitor"))
+    }
+    
     var availableCurrencies: [String] {
         return currencies.filter { currency in
             exchangeRates.contains(where: {
                 $0.book?.split(separator: "_")[1].lowercased() == currency.lowercased()
             })
         }
+    }
+    
+    private var noFieldsAreBeingUsed: Bool {
+        return !mainFieldActive && !secondaryFieldActive
     }
     
     private func swap() {
@@ -180,11 +227,38 @@ final class CalculatorViewModel: ObservableObject {
         currencies.append(contentsOf: newItems)
     }
     
+    private func updateFieldValueBasedOnFocus() {
+        if noFieldsAreBeingUsed {
+            onMainCurrencyValueChange()
+            onSecondaryCurrencyValueChange()
+        }
+    }
+    
+    private func manageShowExchangeRateWarning(_ book: String?) {
+        if book == nil { return }
+        let bookContainsMain = book!.contains(mainCurrency.lowercased())
+        let bookContainsSecondary = book!.contains(secondaryCurrency.lowercased())
+        let anyValueStored = mainCurrencyValue > 0 || secondaryCurrencyValue > 0
+        let isSecondaryCurrencySelected = !secondaryCurrency.isEmpty
+        if anyValueStored && isSecondaryCurrencySelected {
+            if mainFieldActive || secondaryFieldActive {
+                if bookContainsMain || bookContainsSecondary {
+                    showExchangeRateChangedWarning = true
+                }
+            }
+        }
+    }
+    
     private func loadExchangeRates() async throws {
         let fetchedExchangeRates: [ExchangeRates] = try await exchangeRatesService.execute(currencies: currencies)
         for fetched in fetchedExchangeRates {
             if let index = exchangeRates.firstIndex(where: { $0.book == fetched.book }) {
-                exchangeRates[index] = fetched
+                let current = exchangeRates[index]
+                if current.ask != fetched.ask || current.bid != fetched.bid {
+                    exchangeRates[index] = fetched
+                    manageShowExchangeRateWarning(current.book)
+                    updateFieldValueBasedOnFocus()
+                }
             } else {
                 exchangeRates.append(fetched)
             }
@@ -200,11 +274,11 @@ extension CalculatorViewModel {
             tickersService: TickersService(repository: TickersRepository(apiClient: apiClient))
         )
     }
-
-    static func makeMock() -> CalculatorViewModel {
+    
+    static func makeMock(_ seconds: Int) -> CalculatorViewModel {
         CalculatorViewModel(
-            exchangeRatesService: ExchangeRatesService(repository: MockExchangeRatesRepository()),
-            tickersService: TickersService(repository: MockTickersRepository())
+            exchangeRatesService: ExchangeRatesService(repository: MockExchangeRatesRepository(fakeDelayInSeconds: seconds)),
+            tickersService: TickersService(repository: MockTickersRepository(fakeDelayInSeconds: seconds))
         )
     }
 }

@@ -5,6 +5,8 @@
 "loading_currencies" = "Loading currencies...";
 "try_again" = "Try again";
 "an_error_occurred" = "An error occurred";
+"warning_exchange_rate_changed" = "The selected currency’s exchange rate has changed";
+"warning_exchange_rate_changed_help" = "Dismissing the keyboard will automatically update the value";
 "error_invalid_response" = "Invalid Response";
 "error_no_internet" = "No Internet Connection";
 "error_timeout" = "Request timed out.";

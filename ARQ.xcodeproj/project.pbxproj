@@ -6,8 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		535155F82FCCF6AE00D8EF40 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531E7E7E2FC657A2002AE297 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 531E7E852FC657A2002AE297;
+			remoteInfo = ARQ;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		531E7E862FC657A2002AE297 /* ARQ.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARQ.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		535155F42FCCF6AE00D8EF40 /* ARQTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ARQTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -29,10 +40,22 @@
 			path = ARQ;
 			sourceTree = "<group>";
 		};
+		535155F52FCCF6AE00D8EF40 /* ARQTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ARQTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		531E7E832FC657A2002AE297 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		535155F12FCCF6AE00D8EF40 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -46,6 +69,7 @@
 			isa = PBXGroup;
 			children = (
 				531E7E882FC657A2002AE297 /* ARQ */,
+				535155F52FCCF6AE00D8EF40 /* ARQTests */,
 				531E7E872FC657A2002AE297 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				531E7E862FC657A2002AE297 /* ARQ.app */,
+				535155F42FCCF6AE00D8EF40 /* ARQTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -83,6 +108,29 @@
 			productReference = 531E7E862FC657A2002AE297 /* ARQ.app */;
 			productType = "com.apple.product-type.application";
 		};
+		535155F32FCCF6AE00D8EF40 /* ARQTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 535155FC2FCCF6AE00D8EF40 /* Build configuration list for PBXNativeTarget "ARQTests" */;
+			buildPhases = (
+				535155F02FCCF6AE00D8EF40 /* Sources */,
+				535155F12FCCF6AE00D8EF40 /* Frameworks */,
+				535155F22FCCF6AE00D8EF40 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				535155F92FCCF6AE00D8EF40 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				535155F52FCCF6AE00D8EF40 /* ARQTests */,
+			);
+			name = ARQTests;
+			packageProductDependencies = (
+			);
+			productName = ARQTests;
+			productReference = 535155F42FCCF6AE00D8EF40 /* ARQTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -96,6 +144,10 @@
 					531E7E852FC657A2002AE297 = {
 						CreatedOnToolsVersion = 26.3;
 					};
+					535155F32FCCF6AE00D8EF40 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = 531E7E852FC657A2002AE297;
+					};
 				};
 			};
 			buildConfigurationList = 531E7E812FC657A2002AE297 /* Build configuration list for PBXProject "ARQ" */;
@@ -104,6 +156,9 @@
 			knownRegions = (
 				en,
 				Base,
+				"pt-BR",
+				pl,
+				"zh-Hans",
 			);
 			mainGroup = 531E7E7D2FC657A2002AE297;
 			minimizedProjectReferenceProxies = 1;
@@ -113,12 +168,20 @@
 			projectRoot = "";
 			targets = (
 				531E7E852FC657A2002AE297 /* ARQ */,
+				535155F32FCCF6AE00D8EF40 /* ARQTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		531E7E842FC657A2002AE297 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		535155F22FCCF6AE00D8EF40 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -135,7 +198,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		535155F02FCCF6AE00D8EF40 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		535155F92FCCF6AE00D8EF40 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 531E7E852FC657A2002AE297 /* ARQ */;
+			targetProxy = 535155F82FCCF6AE00D8EF40 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		531E7E8F2FC657A3002AE297 /* Debug */ = {
@@ -143,6 +221,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -191,7 +270,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -207,6 +286,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -249,7 +329,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -337,6 +417,50 @@
 			};
 			name = Release;
 		};
+		535155FA2FCCF6AE00D8EF40 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 834WJG58A6;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = rafael.ARQTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ARQ.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ARQ";
+			};
+			name = Debug;
+		};
+		535155FB2FCCF6AE00D8EF40 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 834WJG58A6;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = rafael.ARQTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ARQ.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ARQ";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -354,6 +478,15 @@
 			buildConfigurations = (
 				531E7E922FC657A3002AE297 /* Debug */,
 				531E7E932FC657A3002AE297 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		535155FC2FCCF6AE00D8EF40 /* Build configuration list for PBXNativeTarget "ARQTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				535155FA2FCCF6AE00D8EF40 /* Debug */,
+				535155FB2FCCF6AE00D8EF40 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

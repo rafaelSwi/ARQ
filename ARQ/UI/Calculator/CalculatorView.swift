@@ -10,8 +10,8 @@ import SwiftUI
 struct CalculatorView: View {
     
     // makeDefault(): Makes the API calls listed in the task description.
-    // makeMock(): It simulates an API call and uses fake data.
-    @StateObject var vm = CalculatorViewModel.makeMock()
+    // makeMock(SECONDS): It simulates an API call and uses fake data.
+    @StateObject var vm = CalculatorViewModel.makeMock(3)
     
     var body: some View {
         
@@ -73,18 +73,17 @@ struct CalculatorView: View {
             }
             .task {
                 await vm.loadData()
+                vm.startPolling()
             }
             
-            if vm.somethingGoneWrong {
-                Spacer()
-                    .frame(height: 20)
-                ErrorWarningView(message: vm.errorMessage, retryAction: vm.retryButtonAction)
-            }
+            ErrorWarningView(message: vm.errorMessage, show: vm.somethingGoneWrong, retryAction: vm.retryButtonAction)
+            
+            ExchangeRateChangedWarningView(show: vm.showExchangeRateChangedWarning)
             
             Color.clear
                 .contentShape(Rectangle())
                 .onTapGesture {
-                    UsabilityUtils.lowerKeyboard()
+                    vm.onEmptyAreaClickAction()
                 }
         }
         .sheet(isPresented: $vm.showInterchangeSheet) {
