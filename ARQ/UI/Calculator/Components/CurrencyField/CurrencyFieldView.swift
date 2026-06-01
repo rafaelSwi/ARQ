@@ -30,7 +30,6 @@ struct CurrencyFieldView: View {
                 .frame(width: 16, height: 16)
             
             Group {
-                
                 Group {
                     
                     Text(CurrencyUtils.currencyName(currency))
@@ -49,7 +48,6 @@ struct CurrencyFieldView: View {
                 Spacer()
                 
                 ZStack {
-                    
                     HStack {
                         
                         Spacer()
@@ -90,6 +88,11 @@ struct CurrencyFieldView: View {
         .padding(vm.clipPadding)
         .background(.stockButton)
         .clipShape(RoundedRectangle(cornerRadius: vm.clipCornerRadius))
+        .onChange(of: vm.selection) {
+            if active {
+                vm.persistTextSelectionAtTheEnd()
+            }
+        }
         
     }
 }

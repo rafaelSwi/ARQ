@@ -18,7 +18,6 @@ struct ExchangeRateChangedWarningView: View {
             VStack {
                 Text(vm.exchangeRateChangedWarning)
                     .defaultFont(size: 14, weight: .semiBold)
-                    .foregroundStyle(.orange)
                 
                 Spacer()
                     .frame(height: 8)
@@ -27,7 +26,7 @@ struct ExchangeRateChangedWarningView: View {
                     .defaultFont(size: 12, weight: .semiBold)
             }
             .padding(.top, show ? 15 : 0)
-            .foregroundStyle(.orange)
+            .foregroundStyle(.gray)
             .opacity(vm.opacity)
             .onAppear { vm.startPulsing() }
             .onDisappear { vm.stopPulsing() }

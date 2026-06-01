@@ -61,6 +61,7 @@ final class CurrencyFieldViewModel: ObservableObject {
         if typed.isEmpty {
             if !store.isEmpty {
                 if consecutiveBackspaces >= 7 {
+                    VibrationUtils.deniabilityVibrate()
                     store.removeAll()
                 } else {
                     consecutiveBackspaces += 1
