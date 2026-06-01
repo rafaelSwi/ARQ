@@ -9,6 +9,8 @@ import SwiftUI
 
 struct CurrencyFieldView: View {
     
+    @StateObject var vm = CurrencyFieldViewModel()
+    
     @Binding var value: Double
     
     @Binding var currency: String
@@ -20,8 +22,6 @@ struct CurrencyFieldView: View {
     let onFocus: (() -> Void)
     
     @FocusState private var isFocused: Bool
-    
-    @StateObject var vm = CurrencyFieldViewModel()
     
     var body: some View {
         HStack {
@@ -54,7 +54,7 @@ struct CurrencyFieldView: View {
                         
                         Spacer()
                         
-                        Text(vm.visibleInput)
+                        Text(vm.visibleInput(active))
                             .multilineTextAlignment(.trailing)
                             .lineLimit(1)
                             .defaultFont()
@@ -78,6 +78,7 @@ struct CurrencyFieldView: View {
                 .onChange(of: isFocused) {
                     if isFocused {
                         vm.persistTextSelectionAtTheEnd()
+                        vm.resetConsecutiveBackspaces()
                         onFocus()
                     }
                 }

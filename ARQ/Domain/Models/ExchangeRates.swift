@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ExchangeRates {
+struct ExchangeRates: Codable {
     var ask: Double?
     var bid: Double?
     let book: String?

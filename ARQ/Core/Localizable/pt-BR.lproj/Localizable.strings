@@ -13,3 +13,6 @@
 "error_decoding_failed" = "Falha ao processar os dados recebidos.";
 "error_invalid_url" = "URL inválida";
 "error_internal_server" = "Erro interno do servidor";
+"error_fetching_latest_exchange_rate" = "Erro ao obter a taxa de câmbio mais recente.";
+"ignore_for_now" = "Ignorar por enquanto";
+"offline_mode_message" = "Somente taxas já salvas serão usadas.";

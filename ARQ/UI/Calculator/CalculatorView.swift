@@ -76,7 +76,15 @@ struct CalculatorView: View {
                 vm.startPolling()
             }
             
-            ErrorWarningView(message: vm.errorMessage, show: vm.somethingGoneWrong, retryAction: vm.retryButtonAction)
+            OfflineModeBadgeView(show: vm.offlineMode)
+            
+            ErrorWarningView(
+                offlineMode: $vm.offlineMode,
+                message: vm.errorMessage,
+                show: vm.somethingGoneWrong,
+                hasSavedData: vm.hasCachedCurrencySelection,
+                retryAction: vm.retryButtonAction
+            )
             
             ExchangeRateChangedWarningView(show: vm.showExchangeRateChangedWarning)
             

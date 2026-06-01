@@ -13,3 +13,6 @@
 "error_decoding_failed" = "处理接收到的数据失败。";
 "error_invalid_url" = "无效的 URL";
 "error_internal_server" = "服务器内部错误";
+"error_fetching_latest_exchange_rate" = "无法获取最新汇率。";
+"ignore_for_now" = "暂时忽略";
+"offline_mode_message" = "仅使用已保存的汇率。";

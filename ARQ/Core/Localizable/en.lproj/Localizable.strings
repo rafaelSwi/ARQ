@@ -13,3 +13,6 @@
 "error_decoding_failed" = "Failed to process the received data.";
 "error_invalid_url" = "Invalid URL";
 "error_internal_server" = "Internal Server Error";
+"error_fetching_latest_exchange_rate" = "Failed to retrieve the latest exchange rate.";
+"ignore_for_now" = "Ignore for now";
+"offline_mode_message" = "Only the exchange rates stored in memory will be used.";

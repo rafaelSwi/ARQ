@@ -13,3 +13,6 @@
 "error_decoding_failed" = "Nie udało się przetworzyć otrzymanych danych.";
 "error_invalid_url" = "Nieprawidłowy adres URL";
 "error_internal_server" = "Wewnętrzny błąd serwera";
+"error_fetching_latest_exchange_rate" = "Nie udało się pobrać najnowszego kursu wymiany.";
+"ignore_for_now" = "Zignoruj na razie";
+"offline_mode_message" = "Używane są zapisane kursy.";

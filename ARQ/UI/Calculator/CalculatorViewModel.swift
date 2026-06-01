@@ -15,6 +15,8 @@ final class CalculatorViewModel: ObservableObject {
     private let exchangeRatesService: ExchangeRatesService
     private let tickersService: TickersService
     
+    private let localStorage = LocalStorageRepository()
+    
     private var pollingTask: Task<Void, Never>?
     private let monitor = NWPathMonitor()
     private var isConnected: Bool = false
@@ -25,10 +27,13 @@ final class CalculatorViewModel: ObservableObject {
     ) {
         self.exchangeRatesService = exchangeRatesService
         self.tickersService = tickersService
+        loadFromCache()
         startNetworkMonitor()
     }
     
     let title: LocalizedStringKey = "exchange_calculator_title"
+    
+    let cooldownToRefreshExchangeRate: Int = 120
     
     @Published var currencies: [String] = []
     @Published var exchangeRates: [ExchangeRates] = []
@@ -38,15 +43,19 @@ final class CalculatorViewModel: ObservableObject {
     @Published var showExchangeRateChangedWarning: Bool = false
     
     @Published var mainCurrency: String = ""
-    @Published var mainCurrencyValue: Double = 0.0
-    
     @Published var secondaryCurrency: String = ""
+    
+    @Published var mainCurrencyValue: Double = 0.0
     @Published var secondaryCurrencyValue: Double = 0.0
     
     @Published var mainFieldActive: Bool = false
     @Published var secondaryFieldActive: Bool = false
     
-    let cooldownToRefreshExchangeRate: Int = 60
+    @Published var offlineMode: Bool = false {
+        didSet {
+            enterOfflineMode(offlineMode)
+        }
+    }
     
     func onDismissSheetAction() {
         VibrationUtils.softVibrate()
@@ -86,6 +95,12 @@ final class CalculatorViewModel: ObservableObject {
     
     var somethingGoneWrong: Bool {
         return errorMessage != nil
+    }
+    
+    var hasCachedCurrencySelection: Bool {
+        let main = localStorage.loadMainCurrency()
+        let secondary = localStorage.loadSecondaryCurrency()
+        return !main.isEmpty && !secondary.isEmpty
     }
     
     func onMainCurrencyValueChange() {
@@ -128,11 +143,13 @@ final class CalculatorViewModel: ObservableObject {
         } else {
             secondaryCurrency = currency
             secondaryCurrencyValue = convert(mainCurrency, currency, amount: mainCurrencyValue) ?? 0
+            saveSelectedCurrencies()
         }
         showInterchangeSheet = false
     }
     
     func loadData() async {
+        guard !offlineMode else { return }
         initializeUsdcValues()
         do {
             try await loadCurrencies()
@@ -155,6 +172,7 @@ final class CalculatorViewModel: ObservableObject {
     }
     
     private func refreshRates() async {
+        guard !offlineMode else { return }
         do {
             try await loadExchangeRates()
         } catch {}
@@ -184,6 +202,11 @@ final class CalculatorViewModel: ObservableObject {
     private func swap() {
         Swift.swap(&mainCurrency, &secondaryCurrency)
         Swift.swap(&mainCurrencyValue, &secondaryCurrencyValue)
+        localStorage.saveSelectedCurrencies(main: mainCurrency, secondary: secondaryCurrency)
+    }
+    
+    private func saveSelectedCurrencies() {
+        localStorage.saveSelectedCurrencies(main: mainCurrency, secondary: secondaryCurrency)
     }
     
     private func formatConvertedValue(_ value: Double) -> String {
@@ -216,8 +239,37 @@ final class CalculatorViewModel: ObservableObject {
     }
     
     private func initializeUsdcValues() {
-        currencies.append("USDc")
-        mainCurrency = "USDc"
+        if !currencies.contains("USDc") {
+            currencies.append("USDc")
+        }
+        if mainCurrency.isEmpty {
+            mainCurrency = "USDc"
+        }
+    }
+    
+    private func enterOfflineMode(_ offlineMode: Bool) {
+        if !offlineMode { return }
+        errorMessage = nil
+        showExchangeRateChangedWarning = false
+    }
+    
+    private func loadFromCache() {
+        let cachedCurrencies = localStorage.loadCurrencies()
+        let cachedRates = localStorage.loadExchangeRates()
+
+        if !cachedCurrencies.isEmpty {
+            currencies = cachedCurrencies
+            if let first = cachedCurrencies.first {
+                mainCurrency = first
+            }
+        }
+        
+        mainCurrency = localStorage.loadMainCurrency()
+        secondaryCurrency = localStorage.loadSecondaryCurrency()
+
+        if !cachedRates.isEmpty {
+            exchangeRates = cachedRates
+        }
     }
     
     private func loadCurrencies() async throws {
@@ -225,6 +277,7 @@ final class CalculatorViewModel: ObservableObject {
         let existing = Set(currencies)
         let newItems = fetchedCurrencies.filter { !existing.contains($0) }
         currencies.append(contentsOf: newItems)
+        localStorage.saveCurrencies(currencies)
     }
     
     private func updateFieldValueBasedOnFocus() {
@@ -263,6 +316,7 @@ final class CalculatorViewModel: ObservableObject {
                 exchangeRates.append(fetched)
             }
         }
+        localStorage.saveExchangeRates(exchangeRates)
     }
 }
 

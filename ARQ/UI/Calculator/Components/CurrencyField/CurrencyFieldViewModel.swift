@@ -17,13 +17,17 @@ final class CurrencyFieldViewModel: ObservableObject {
     
     let clipCornerRadius: CGFloat = 16
     
+    private let maxArraySize: Int = 18
+    
+    private var consecutiveBackspaces: Int = 0
+    
     @Published var input: String = "|"
     
     @Published var store: [String] = []
     
     @Published var selection: TextSelection?
     
-    var visibleInput: String {
+    func visibleInput(_ active: Bool) -> String {
         let filtered = store.filter { $0 != "$" }
         let (integerPart, decimalPart) = splitIntegerAndDecimal(filtered)
         let formattedInteger = formatWithThousandSeparator(integerPart)
@@ -32,12 +36,19 @@ final class CurrencyFieldViewModel: ObservableObject {
         if let decimal = decimalPart {
             result += "." + decimal
         }
+        if !active && store.count >= maxArraySize {
+            result += "…"
+        }
         return result
     }
     
     func resetUserInput() {
         input = "|"
         persistTextSelectionAtTheEnd()
+    }
+    
+    func resetConsecutiveBackspaces() {
+        consecutiveBackspaces = 0
     }
     
     func registerInput() {
@@ -49,9 +60,15 @@ final class CurrencyFieldViewModel: ObservableObject {
         
         if typed.isEmpty {
             if !store.isEmpty {
-                store.removeLast()
+                if consecutiveBackspaces >= 7 {
+                    store.removeAll()
+                } else {
+                    consecutiveBackspaces += 1
+                    store.removeLast()
+                }
             }
         } else if allowedInputs.contains(typed) {
+            resetConsecutiveBackspaces()
             appendToStore(typed)
         }
         
@@ -97,7 +114,7 @@ final class CurrencyFieldViewModel: ObservableObject {
         let decimalPart = Array(parts.suffix(from: parts.index(after: sepIndex))).joined()
         return (integerPart, decimalPart)
     }
-
+    
     private func formatWithThousandSeparator(_ parts: [String]) -> String {
         let joined = parts.joined()
         return joined.reversed()
@@ -109,7 +126,7 @@ final class CurrencyFieldViewModel: ObservableObject {
     
     private func convertDoubleToStore(_ value: Double) -> [String] {
         let isInteger = value.truncatingRemainder(dividingBy: 1) == 0
-
+        
         let formatted: String
         if isInteger {
             formatted = String(format: "%.0f", value)
@@ -123,13 +140,13 @@ final class CurrencyFieldViewModel: ObservableObject {
             formatted = String(format: "%.\(significantDecimals)f", value)
                 .replacingOccurrences(of: ".", with: ",")
         }
-
+        
         let result = formatted.map { String($0) }
         return Array(result.prefix(18))
     }
     
     private func appendToStore(_ typed: String) {
-        guard store.count < 18 else { return }
+        guard store.count < maxArraySize else { return }
         
         let hasDecimalSeparator = store.contains(",") || store.contains(".")
         if (typed == "," || typed == ".") && hasDecimalSeparator {
